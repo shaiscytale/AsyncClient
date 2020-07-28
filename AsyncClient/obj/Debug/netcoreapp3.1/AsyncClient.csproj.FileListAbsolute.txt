@@ -1,0 +1,13 @@
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\bin\Debug\netcoreapp3.1\AsyncClient.exe
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\bin\Debug\netcoreapp3.1\AsyncClient.deps.json
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\bin\Debug\netcoreapp3.1\AsyncClient.runtimeconfig.json
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\bin\Debug\netcoreapp3.1\AsyncClient.runtimeconfig.dev.json
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\bin\Debug\netcoreapp3.1\AsyncClient.dll
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\bin\Debug\netcoreapp3.1\AsyncClient.pdb
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\obj\Debug\netcoreapp3.1\AsyncClient.csprojAssemblyReference.cache
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\obj\Debug\netcoreapp3.1\AsyncClient.AssemblyInfoInputs.cache
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\obj\Debug\netcoreapp3.1\AsyncClient.AssemblyInfo.cs
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\obj\Debug\netcoreapp3.1\AsyncClient.csproj.CoreCompileInputs.cache
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\obj\Debug\netcoreapp3.1\AsyncClient.dll
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\obj\Debug\netcoreapp3.1\AsyncClient.pdb
+Z:\Prog\C#\AsyncClient\AsyncClient\AsyncClient\obj\Debug\netcoreapp3.1\AsyncClient.genruntimeconfig.cache
