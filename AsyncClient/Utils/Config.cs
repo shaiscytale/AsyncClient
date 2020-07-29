@@ -6,6 +6,11 @@ namespace AsyncClient.Utils
 {
     internal static class Config
     {
+
+        internal const int DEFAULT_PORT = 420;
+        internal const string DEFAULT_IP = "127.0.0.1";
+        internal const bool DEBUG = true;
+
         internal const int WIN_WIDTH = 100;
         internal const int WIN_HEIGHT = 41;
         internal const int IP_W = 80;

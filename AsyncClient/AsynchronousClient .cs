@@ -1,5 +1,6 @@
 ﻿using AsyncClient.UI;
 using AsyncClient.Utils;
+using Datalink.Models;
 using System;
 using System.Net;
 using System.Net.Sockets;
@@ -32,7 +33,7 @@ namespace AsyncClient
 
         #region fuckin' var
 
-        private static Socket ClientSocket;
+        private static Socket _socket;
 
         private static IPAddress _ip;
         private static int _port;
@@ -41,17 +42,13 @@ namespace AsyncClient
         private static string _sysmess = "";
         private static string _connectedLabel = "";
 
-        private const int PORT = 420;
-
-        private const bool DEBUG = false;
-
         #endregion
 
         #region Main
         static void Main()
         {
             Console.Title = "Client";
-            _keepGoing = !DEBUG;
+            _keepGoing = true;
 
             Startup();
 
@@ -68,10 +65,9 @@ namespace AsyncClient
                 _keepGoing = ( keepGoingResponse == "yes" );
             }
 
-
             CustomConsole.Ask( "End of program, press a key to close..." );
 
-            if( !DEBUG ) Exit();
+            Exit();
         }
         #endregion
 
@@ -109,48 +105,57 @@ namespace AsyncClient
 
         private static bool TargetRemote( out IPAddress ip, out int port )
         {
-            string ipResponse;
-            bool ipOk = false;
-            ip = IPAddress.Loopback;
-            port = -1;
-            string portResponse;
-            bool portOk = false;
-
-            CustomConsole.SystemMessage( "Setting remote connection infos..." );
-
-            while( !ipOk )
+            if( Config.DEBUG )
             {
-                ipResponse = CustomConsole.Ask( "ip => " );
-                ipOk = IPAddress.TryParse( ipResponse, out ip );
-                if( !ipOk ) CustomConsole.SystemMessage( "invalid ip" );
+                IPAddress.TryParse( Config.DEFAULT_IP, out ip );
+                port = Config.DEFAULT_PORT;
             }
-            CustomConsole.DrawTopRightLabelBox( String.Format( "no-port@{0}", ip ) );
-
-            while( !portOk )
+            else
             {
-                portResponse = CustomConsole.Ask( "port => " );
-                portOk = int.TryParse( portResponse, out port ) && ( 0 < port && port < 9999 );
-                if( !portOk ) CustomConsole.SystemMessage( "invalid port" );
+                string ipResponse;
+                bool ipOk = false;
+                ip = IPAddress.Loopback;
+                port = -1;
+                string portResponse;
+                bool portOk = false;
+
+                CustomConsole.SystemMessage( "Setting remote connection infos..." );
+
+                while( !ipOk )
+                {
+                    ipResponse = CustomConsole.Ask( "ip => " );
+                    ipOk = IPAddress.TryParse( ipResponse, out ip );
+                    if( !ipOk ) CustomConsole.SystemMessage( "invalid ip" );
+                }
+                CustomConsole.DrawTopRightLabelBox( String.Format( "no-port@{0}", ip ) );
+
+                while( !portOk )
+                {
+                    portResponse = CustomConsole.Ask( "port => " );
+                    portOk = int.TryParse( portResponse, out port ) && ( 0 < port && port < 9999 );
+                    if( !portOk ) CustomConsole.SystemMessage( "invalid port" );
+                }
             }
             CustomConsole.DrawTopRightLabelBox( String.Format( "{0}@{1}", port, ip ) );
 
             CustomConsole.SystemMessage( "Remote connection ready to test..." );
-            
+
             return true;
         }
 
-        private static void ConnectToServer( IPAddress address, int port = PORT )
+        private static void ConnectToServer( IPAddress address, int port = Config.DEFAULT_PORT )
         {
-            ClientSocket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
+            _socket = new Socket( AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp );
             int attempts = 0;
 
-            while( !ClientSocket.Connected )
+            while( !_socket.Connected )
             {
                 try
                 {
                     attempts++;
-                    CustomConsole.SystemMessage( "Connection attempt " + attempts );
-                    ClientSocket.Connect( address, port );
+                    // ya pas grand chose d'autre à faire que de se frotter la cuisse
+                    CustomConsole.SystemMessage( String.Format("{0} attempt ", attempts) );
+                    _socket.Connect( address, port );
                 }
                 catch( SocketException )
                 {
@@ -158,15 +163,14 @@ namespace AsyncClient
                 }
             }
 
-            if( ClientSocket != null
-                && ClientSocket.Connected
+            if( _socket != null
+                && _socket.Connected
                 && _ip != null
                 && _port != -1 )
                 CustomConsole.DrawTopRightLabelBox( String.Format( "{0}@{1}", _port, _ip ) );
             else
                 CustomConsole.DrawTopRightLabelBox( "Not connected" );
             
-
             CustomConsole.SystemMessage( "Connected" );
         }
 
@@ -175,15 +179,14 @@ namespace AsyncClient
         #region messagin' the server
         private static void RequestLoop()
         {
-            CustomConsole.SystemMessage( @"<Type ""$exit"" to properly disconnect client>" );
-            bool connection = (ClientSocket != null && ClientSocket.Connected);
+            bool connection = (_socket != null && _socket.Connected);
             bool exit = false;
             while( connection && !exit )
             {
                 SendRequest( out exit );
-                if( ClientSocket != null && ClientSocket.Connected && !exit )
+                if( _socket != null && _socket.Connected && !exit )
                     ReceiveResponse();
-                connection = ( ClientSocket != null && ClientSocket.Connected );
+                connection = ( _socket != null && _socket.Connected );
             }
         }
 
@@ -191,30 +194,43 @@ namespace AsyncClient
         {
 
             string request = CustomConsole.Ask( "send => " );
-            exit = ( request.ToLower() == Commands.EXIT );
-            // temporary, change this to send Bags
-            SendString( request );
+            // compute wich commands the user wants to send
+
+            // build a bag with the corresponding command
+            Bag bag = new Bag();
+            // send the bad
+            SendBag( bag );
+
+            exit = ( request.ToLower().StartsWith( Commands.EXIT ) );
+
+            //// temporary, change this to send Bags
+            //SendString( request );
         }
 
-        /// <summary>
-        /// change this one to send Datalink.Models.Bag instead
-        /// </summary>
-        /// <param name="text"></param>
         private static void SendString( string text )
         {
-            if( ClientSocket != null && ClientSocket.Connected )
+            if( _socket != null && _socket.Connected )
             {
                 byte[] buffer = Encoding.ASCII.GetBytes(text);
-                ClientSocket.Send( buffer, 0, buffer.Length, SocketFlags.None );
+                _socket.Send( buffer, 0, buffer.Length, SocketFlags.None );
+            }
+        }
+
+        private static void SendBag( Bag bag )
+        {
+            if( _socket != null && _socket.Connected )
+            {
+                byte[] buffer = bag.Serialize();
+                _socket.Send( buffer, 0, buffer.Length, SocketFlags.None );
             }
         }
 
         private static void ReceiveResponse()
         {
-            if( ClientSocket != null && ClientSocket.Connected )
+            if( _socket != null && _socket.Connected )
             {
                 var buffer = new byte[2048];
-                int received = ClientSocket.Receive(buffer, SocketFlags.None);
+                int received = _socket.Receive(buffer, SocketFlags.None);
                 if( received == 0 ) return;
                 var data = new byte[received];
                 Array.Copy( buffer, data, received );
@@ -230,7 +246,7 @@ namespace AsyncClient
         /// </summary>
         private static void Exit()
         {
-            ClientSocket.Close();
+            _socket.Close();
             Environment.Exit( 0 );
         }
 
@@ -239,7 +255,7 @@ namespace AsyncClient
         /// </summary>
         private static void Disconnect()
         {
-            ClientSocket.Shutdown( SocketShutdown.Both );
+            _socket.Shutdown( SocketShutdown.Both );
         }
         #endregion
     }

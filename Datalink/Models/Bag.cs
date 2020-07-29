@@ -13,8 +13,7 @@ namespace Datalink.Models
 
         public Bag() { Headers = new Dictionary<string, string>(); }
 
-        public Bag( object load,
-            int commandId = 0 )
+        public Bag( object load, int commandId = 0 )
         {
             Headers = new Dictionary<string, string>();
             CommandId = commandId;
