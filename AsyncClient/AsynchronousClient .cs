@@ -192,12 +192,14 @@ namespace AsyncClient
 
             string request = CustomConsole.Ask( "send => " );
             exit = ( request.ToLower() == Commands.EXIT );
+            // temporary, change this to send Bags
             SendString( request );
         }
 
         /// <summary>
-        /// Sends a string to the server with ASCII encoding.
+        /// change this one to send Datalink.Models.Bag instead
         /// </summary>
+        /// <param name="text"></param>
         private static void SendString( string text )
         {
             if( ClientSocket != null && ClientSocket.Connected )

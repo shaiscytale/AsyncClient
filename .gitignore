@@ -1,6 +1,9 @@
 AsyncClient/Bin/
 AsyncClient/obj/
 
+Datalink/Bin/
+Datalink/obj/
+
 *.vs/
 
 .vs/
