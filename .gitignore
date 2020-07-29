@@ -1,6 +1,10 @@
 AsyncClient/Bin/
 AsyncClient/obj/
 
+*.vs/
+
+.vs/
+
 *.sln
 *.csproj
 

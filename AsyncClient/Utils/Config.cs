@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AsyncClient.Utils
 {
-    public static class Config
+    internal static class Config
     {
         internal const int WIN_WIDTH = 100;
         internal const int WIN_HEIGHT = 41;
@@ -28,7 +28,7 @@ namespace AsyncClient.Utils
 
     }
 
-    public static class Commands
+    internal static class Commands
     {
         internal const string EXIT = "$exit";
         internal const string NICK = "$nick";
