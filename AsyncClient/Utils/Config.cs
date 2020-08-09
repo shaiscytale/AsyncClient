@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace AsyncClient.Utils
 {
@@ -26,7 +24,6 @@ namespace AsyncClient.Utils
 
         internal const ConsoleColor MESSBOX_COLOR_BACK = ConsoleColor.Black;
         internal const ConsoleColor MESSBOX_COLOR_FRONT = ConsoleColor.Cyan;
-
 
         internal const int MESSAGE_STACK_MAX_LIN = 37;
         internal const int MESSAGE_STACK_MAX_COL = 100;

@@ -57,7 +57,7 @@ namespace AsyncClient
                 if( TargetRemote( out _ip, out _port ) )
                 {
                     ConnectToServer( _ip, _port );
-                    RequestLoop();
+                    SendAndReceiveLoop();
                     Disconnect();
                 }
 
@@ -177,7 +177,7 @@ namespace AsyncClient
         #endregion
 
         #region messagin' the server
-        private static void RequestLoop()
+        private static void SendAndReceiveLoop()
         {
             bool connection = (_socket != null && _socket.Connected);
             bool exit = false;
@@ -197,7 +197,7 @@ namespace AsyncClient
             // compute wich commands the user wants to send
 
             // build a bag with the corresponding command
-            Bag bag = new Bag();
+            Bag bag = new Bag("test", 1);
             // send the bad
             SendBag( bag );
 
@@ -220,7 +220,7 @@ namespace AsyncClient
         {
             if( _socket != null && _socket.Connected )
             {
-                byte[] buffer = bag.Serialize();
+                byte[] buffer = bag.JSerialize();
                 _socket.Send( buffer, 0, buffer.Length, SocketFlags.None );
             }
         }
@@ -241,22 +241,18 @@ namespace AsyncClient
         #endregion
 
         #region Disconnect from the server
-        /// <summary>
-        /// Close the program
-        /// </summary>
+
         private static void Exit()
         {
             _socket.Close();
             Environment.Exit( 0 );
         }
 
-        /// <summary>
-        /// Close socket to infor server we quit
-        /// </summary>
         private static void Disconnect()
         {
             _socket.Shutdown( SocketShutdown.Both );
         }
+
         #endregion
     }
 }

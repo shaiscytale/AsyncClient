@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Text;
+using System.Text.Json;
 
 namespace Datalink.Models
 {
@@ -20,10 +22,10 @@ namespace Datalink.Models
             Load = load;
         }
 
-        public Bag(byte[] message )
+        public Bag( byte[] message )
         {
             Bag obj = Deserialize(message);
-            if(obj != null )
+            if( obj != null )
             {
                 Headers = obj.Headers;
                 CommandId = obj.CommandId;
@@ -44,10 +46,10 @@ namespace Datalink.Models
             if( Headers.ContainsKey( key ) )
                 Headers[key] = value;
             else
-                Headers.Add( key, value );;
+                Headers.Add( key, value ); ;
         }
 
-        public byte[] Serialize()
+        public byte[] BSerialize()
         {
             using( var memoryStream = new MemoryStream() )
             {
@@ -69,6 +71,25 @@ namespace Datalink.Models
                 {
                     return null;
                 }
+            }
+        }
+
+        public byte[] JSerialize()
+        {
+            var serialized = JsonSerializer.Serialize( this );
+            var bytes = Encoding.ASCII.GetBytes( serialized );
+            return bytes;
+        }
+        public static Bag JDeserialize( byte[] message )
+        {
+            Object obj = JsonSerializer.Deserialize<Bag>( message );
+            try
+            {
+                return (Bag)obj;
+            }
+            catch( Exception )
+            {
+                return null;
             }
         }
     }
